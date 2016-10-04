@@ -91,11 +91,11 @@ class Provider extends AbstractProvider implements ProviderInterface
     protected function getRegionBaseUrl()
     {
         $region = $this->getRegion();
-        
+
         if ($region == 'cn') {
             return 'https://www.battlenet.com.cn';
         }
-        
+
         return 'https://'.$region.'.api.battle.net';
     }
 
