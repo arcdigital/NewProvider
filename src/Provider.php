@@ -22,13 +22,13 @@ class Provider extends AbstractProvider implements ProviderInterface
      * {@inheritdoc}
      */
     protected $scopeSeparator = '+';
-    
+
     /**
      * {@inheritdoc}
      */
     protected function getAuthUrl($state)
     {
-        return $this->buildAuthUrlFromBase('https://'.$this->getRegion().'.battle.net/oauth/authorize', $state);
+        return $this->buildAuthUrlFromBase($this->getRegionBaseUrl().'/oauth/authorize', $state);
     }
 
     /**
@@ -36,7 +36,7 @@ class Provider extends AbstractProvider implements ProviderInterface
      */
     protected function getTokenUrl()
     {
-        return "https://{$this->getRegion()}.battle.net/oauth/token";
+        return $this->getRegionBaseUrl().'/oauth/token';
     }
 
     /**
@@ -44,7 +44,7 @@ class Provider extends AbstractProvider implements ProviderInterface
      */
     protected function getUserByToken($token)
     {
-        $response = $this->getHttpClient()->get('https://'.$this->getRegion().'.api.battle.net/account/user', [
+        $response = $this->getHttpClient()->get($this->getRegionBaseUrl().'/account/user', [
             'headers' => [
                 'Authorization' => 'Bearer '.$token,
             ],
@@ -82,7 +82,21 @@ class Provider extends AbstractProvider implements ProviderInterface
      */
     protected function getRegion()
     {
-        return $this->getConfig('region', 'us');
+        return strtolower($this->getConfig('region', 'us'));
+    }
+
+    /**
+     * {@inheritdoc}
+     */
+    protected function getRegionBaseUrl()
+    {
+        $region = $this->getRegion();
+        
+        if ($region == 'cn') {
+            return 'https://www.battlenet.com.cn';
+        }
+        
+        return 'https://'.$region.'.api.battle.net';
     }
 
     /**
